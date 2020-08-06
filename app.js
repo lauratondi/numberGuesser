@@ -12,7 +12,7 @@ GAME FUNCTION:
 let min = 1,
   max = 10,
   winningNum = 2,
-  guessesesLeft = 3;
+  guessesLeft = 3;
 
 // UI Elements
 
@@ -36,17 +36,48 @@ guessBtn.addEventListener('click', function () {
   if (isNaN(guess) || guess < min || guess > max) {
     setMessage(`Please enter a number between ${min} and ${max}`, 'red');
   }
+
   // Checf if won
   if (guess === winningNum) {
-    // disable input
-    guessInput.disabled = true;
-    //   Change border color
-    guessInput.style.borderColor = 'green';
-    //   Set messagge
-    setMessage(`${winningNum} is correct, YOU WIN!`, 'green');
+    //  Game over - Won
+    gameOver(true, `${winningNum} is correct, YOU WIN!`);
   } else {
+    //   Wrong number
+    guessesLeft -= 1;
+
+    if (guessesLeft === 0) {
+      //   Game over - lost
+      gameOver(
+        false,
+        `Game Over, you lost. The correct number was ${winningNum}`
+      );
+    } else {
+      // Game continues -answer wrong
+      // Change border color
+      guessInput.style.borderColor = 'red';
+
+      // Clear input
+      guessInput.value = '';
+
+      // Tell user its the wrong number
+      setMessage(`${guess} is not correct, ${guessesLeft} guesses left`, 'red');
+    }
   }
 });
+
+// Game over
+function gameOver(won, msg) {
+  let color;
+  won === true ? (color = 'green') : (color = 'red');
+
+  guessInput.disabled = true;
+  // Change border color
+  guessInput.style.borderColor = color;
+  // set text color
+  message.style.color = color;
+  //   Set messagge
+  setMessage(msg);
+}
 
 // Set message function
 function setMessage(msg, color) {
